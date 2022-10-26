@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load bootstrap3 %}
+
+<!--{% if filter %}-->
+
+<!--{% endif %}-->
+
+
+<form method="POST" enctype="multipart/form-data">
+
+    <!-- Security token -->
+	{% csrf_token %}
+	<table id="formset" class="form table table-condensed zeon zeon-row-hover">
+	{{ formset.management_form }}
+
+	{% for form in formset.forms %}
+	  {% if forloop.first %}
+	  <thead><tr>
+		{% for field in form.visible_fields %}
+		  <th class="filters">{{ field.label|capfirst }}
+		{% endfor %}
+	  </tr></thead>
+	  {% endif %}
+	  <tr>
+	  {% for field in form.visible_fields %}
+		<td class = 'zeon_input_table_cell'>
+		{# Include the hidden fields in the form #}
+		{% if forloop.first %}
+			  {% for hidden in form.hidden_fields %}
+			  {{ hidden }}
+			  {% endfor %}
+		{% endif %}
+		  {{ field.errors.as_ul }}
+			{{field}}
+		</td>
+	  {% endfor %}
+	  </tr>
+	{% endfor %}
+		<script type = "text/javascript">
+			function isValid() {
+				const weight = document.querySelectorAll("[id$='weight']");
+				const method = document.querySelectorAll("[id$='method']");
+				const low = document.querySelectorAll("[id$='low_level']");
+				const target = document.querySelectorAll("[id$='target_level']");
+				const high = document.querySelectorAll("[id$='high_level']");
+				for (let i = 0; i < weight.length; i++) {
+					var reg = /^[\d\,\.]*$/;
+					let weight_item = weight[i]
+					let method_item = method[i]
+					let low_item = low[i]
+					let target_item = target[i]
+					let high_item = high[i]
+					if (method_item.value!="") {
+
+						if (method_item.value == 3 && weight_item.value > 0) {
+							confirm('Значение веса должно быть отрицательным.');
+						} else {
+							if (Math.abs(weight_item.value) < 9 || Math.abs(weight_item.value) > 61) {
+								confirm("Значение веса должно должно быть больше или равно 10, но меньше или равно 60.");
+							};
+							if (method_item.value == 0 || method_item.value == 1) {
+								if (weight_item.value % 5 != 0) {
+									confirm("Значение веса должно должно быть кратным 5.");
+								}
+							};
+							if (method_item.value == 1) {
+								var cond = reg.test(low_item.value) && reg.test(target_item.value) && reg.test(high_item.value);
+								if (cond == false) {
+									confirm('Для непрерывных КПЭ допустимы только числовые значния.');
+								}
+							};
+
+						}
+					}
+				}
+			};
+		</script>
+
+	</table>
+	<button type="submit" onclick="isValid()">Обновить</button>
+	<button>
+		<a href = "{% url 'download_pivot' %}">Загрузить</a>
+	</button>
+
+	<button>
+		<a href = "{% url 'open' %}">Разрешить запись</a>
+	</button>
+	<button>
+		<a href = "{% url 'close' %}">Закрыть запись</a>
+	</button>
+</form>
+{% endblock %}
+

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load bootstrap3 %}
+{% load render_table from django_tables2 %}
+
+{% if filter %}
+    <form action="" method="get" class="form form-inline">
+        {% bootstrap_form filter.form layout='inline' %}
+        {% bootstrap_button 'Отфильтровать' %}
+        <a href="{% url 'user_pivot' %}" class="nav-link px-2 link-dark">Сбросить все фильтры</a>
+    </form>
+{% endif %}
+
+<form action="" method="post">{% csrf_token %}
+  {% render_table table 'django_tables2/bootstrap.html' %}
+
+</form>
+
+
+{% endblock %}
