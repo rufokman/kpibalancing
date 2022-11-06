@@ -27,10 +27,12 @@
 		{% endif %}
 
 		<tr class='a{{form.status.value}}'>
+
 			<td class = 'zeon_input_table_cell'>
 <!--				<a type="button" class="btn btn-outline-danger" href="#s" >Удалить</a>-->
 <!--				{{ form.DELETE }}-->
 			</td>
+
 	  	{% for field in form.visible_fields %}
 			<td class = 'zeon_input_table_cell'>
 			{# Include the hidden fields in the form #}
@@ -42,6 +44,7 @@
 			  {{ field.errors.as_ul }}
 				{{field}}
 			</td>
+
 	  	{% endfor %}
 	  	</tr>
 	{% endfor %}
@@ -87,7 +90,9 @@
 
 	</table>
 	<input form="data" name='save' type="submit" onclick="isValid()" value="Сохранить" ></input>
-	<input form='data' name='send_to_check' type="submit" onclick="isValid()"></input>
+	<input form='data' name='send_to_check' type="submit" onclick="isValid()" value="Сохранить и отправить"></input>
+	<input form='data' name='delete' type="submit" onclick="isValid()" value="Удалить"></input>
+	<a href="{% url 'export-pdf' %}" target="_blank" class="btn btn-info">Выгрузить отчёт</a>
 
 </form>
 

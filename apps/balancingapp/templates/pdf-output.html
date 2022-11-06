@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF выгрузка</title>
+    <style>
+@page{
+    size: landscape;
+    margin: 2.5cm 1.5cm 3.5cm 1.5cm
+
+}
+    </style>
+</head>
+<body>
+<h2>Выгрузка КПЭ</h2>
+<table class="table">
+    <thead class="thead">
+        <tr>
+            <th>Организация</th>
+            <th>Должность</th>
+            <th>ФИО</th>
+            <th>Наименование КПЭ/КлС</th>
+            <th>Методика расчета</th>
+            <th>Нижний уровень</th>
+            <th>Целевой уровень</th>
+            <th>Верхний уровень</th>
+            <th>Вес</th>
+            <th>Статус</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for card in card_data %}
+        <tr>
+            <th>{{card.organization}}</th>
+            <th>{{card.role}}</th>
+            <th>{{card.fio}}</th>
+            <th>{{card.name}}</th>
+            <th>{{card.method}}</th>
+            <th>{{card.low_level}}</th>
+            <th>{{card.target_level}}</th>
+            <th>{{card.high_level}}</th>
+            <th>{{card.weight}}</th>
+            <th>{{card.get_status_display}}</th>
+        </tr>
+        <tr>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>

@@ -16,8 +16,10 @@
 
 </form>
 <button>
-    <a href = "{% url 'download_pivot' %}">Загрузить</a>
-
+    <a href = "{% url 'download_pivot_not_fix' %}">Выгрузить отчёт без фиксации даты</a>
+</button>
+<button>
+    <a href = "{% url 'download_pivot' %}">Выгрузить отчёт</a>
 </button>
 <a>{{ last_download }}</a>
 

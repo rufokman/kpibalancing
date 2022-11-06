@@ -18,7 +18,7 @@ class AdminPivotView(SingleTableMixin, FilterView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        last_download = Config.objects.first().last_download
+        last_download = Config.objects.first().last_download.strftime("%d.%m.%Y %H:%M")
         context['last_download']=last_download
         return context
 
