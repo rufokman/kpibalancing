@@ -16,33 +16,42 @@ organization_list = ("ЦА", 'Балаковская АЭС', 'Белоярск�
                      'Неорганические сорбенты', 'АТОМДАТА', 'Атомдата - Центр', 'Атомдата - Иннополис')
 
 
+class CustomSelect(forms.Select):
+    option_inherits_attrs = True
+
 class CardsForm(forms.ModelForm):
 
     def clean(self):
+
         cleaned_data = super().clean()
         post_weight = cleaned_data.get("weight")
         post_method = cleaned_data.get("method")
         post_low_level = cleaned_data.get("low_level")
         post_target_level = cleaned_data.get("target_level")
         post_high_level = cleaned_data.get("high_level")
-        continuous_condition = len(re.findall(r"[^\d\,\.]", post_low_level)) != 0 or len(re.findall(r"[^\d\,\.]", post_target_level)) !=0 \
-                               or len(re.findall(r"[^\d\,\.]", post_high_level)) != 0
-        if post_method == 3 and post_weight > 0:
+        if post_weight==None or post_method==None or post_low_level==None or post_high_level==None or post_target_level==None:
             raise ValidationError(
-                "the value must be less then 0"
-            )
-        elif post_method == 1 and continuous_condition:
-            raise ValidationError(
-                "only numeric"
+                u"This field is required"
             )
         else:
-            if np.abs(post_weight) < 9 or np.abs(post_weight) > 61:
+            continuous_condition = len(re.findall(r"[^\d\,\.]", post_low_level)) != 0 or len(re.findall(r"[^\d\,\.]", post_target_level)) !=0 \
+                                   or len(re.findall(r"[^\d\,\.]", post_high_level)) != 0
+            if post_method == 3 and post_weight > 0:
                 raise ValidationError(
-                    "weight must be between 10 and 60"
+                    u"the value must be less then 0"
                 )
-            if post_method == 0 or post_method == 1:
-                if post_weight % 5 != 0:
-                    raise ValidationError("invalid")
+            elif post_method == 1 and continuous_condition:
+                raise ValidationError(
+                    u"only numeric"
+                )
+            else:
+                if np.abs(post_weight) < 9 or np.abs(post_weight) > 61:
+                    raise ValidationError(
+                        u"weight must be between 10 and 60"
+                    )
+                if post_method == 0 or post_method == 1:
+                    if post_weight % 5 != 0:
+                        raise ValidationError(u"invalid")
 
     class Meta:
         model = Card
@@ -59,17 +68,21 @@ class CardsForm(forms.ModelForm):
             'weight',
             'status',
             'id',
+            'verificator',
             'passport',
-            'delete'
+            'delete',
+            'status_for_display',
+
         ]
         widgets = {
             'send': forms.CheckboxInput(),
-            'role': forms.Textarea(attrs={'rows': 2}),
-            'fio': forms.Textarea(attrs={'rows': 2}),
-            'name': forms.Textarea(attrs={'rows': 2}),
-            'status': forms.HiddenInput(),
+            'role': forms.Textarea(attrs={'rows': 2,}),
+            'fio': forms.Textarea(attrs={'rows': 2, }),
+            'name': forms.Textarea(attrs={'rows': 2, }),
+            'status_for_display': forms.TextInput(attrs={'readonly':"True"}),
             'delete': forms.HiddenInput(),
-            # 'organization': floppyforms.widgets.Input(datalist=organization_list)
+            'status': forms.HiddenInput(),
+            'verificator': forms.Textarea(attrs={'rows': 2, }),
 
         }
 
