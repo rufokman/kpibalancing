@@ -57,7 +57,7 @@ def cards_update_view(request):
                     qform.high_level = format(float(qform.high_level.replace(',', '.')), '.3f')
                 if 'save' in request.POST and changed:
                     qform.status = 3
-                if qform.send==True and qform.status == 3 and 'send_to_check' in request.POST and qform.passport!="":
+                if qform.send==True and (qform.status == 3 or qform.status == 2) and 'send_to_check' in request.POST and qform.passport!="":
                     qform.status = 1
                 qform.status_for_display=qform.get_status_display()
                 qform.send = False
