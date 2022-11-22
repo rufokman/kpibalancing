@@ -35,7 +35,8 @@ class OnCheckinView(SingleTableMixin, FilterView):
 def accept_kpi(request, pk):
     card_data = get_object_or_404(Card, pk=pk)
     card_data.status = 0
-    card_data.save(update_fields=['status'])
+    card_data.status_for_display = 'Согласован'
+    card_data.save(update_fields=['status', 'status_for_display'])
     return redirect('onchecking')
 
 
@@ -60,7 +61,8 @@ def reject_kpi(request, pk):
 
     card_data = get_object_or_404(Card, pk=pk)
     card_data.status = 2
-    card_data.save(update_fields=['status'])
+    card_data.status_for_display = 'Отклонён'
+    card_data.save(update_fields=['status', 'status_for_display'])
     return redirect('onchecking')
 
 
