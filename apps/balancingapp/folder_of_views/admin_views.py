@@ -1,8 +1,10 @@
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
 from django_filters import rest_framework as filters
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 from apps.balancingapp.filters import CardFilter
+from apps.balancingapp.forms import *
 from apps.balancingapp.tables import *
 
 
@@ -66,29 +68,28 @@ def reject_kpi(request, pk):
     return redirect('onchecking')
 
 
-#
-# @login_required()
-# def admin_cards_update_view(request):
-#     data = Card.objects.all()
-#     print(request.user)
-#     context = {}
-#     formset = CardFormSet(request.POST or None, queryset=data)
-#     if formset.is_valid():
-#         for form in formset:
-#             if form.cleaned_data == {}:
-#                 continue
-#             # print(form.cleaned_data)
-#             qform = form.save(commit=False)
-#             if qform.method == 1:
-#                 qform.low_level = format(float(qform.low_level.replace(',', '.')), '.3f')
-#                 qform.target_level = format(float(qform.target_level.replace(',', '.')), '.3f')
-#                 qform.high_level = format(float(qform.high_level.replace(',', '.')), '.3f')
-#
-#             qform.save()
-#
-#         return redirect(reverse_lazy("admin_pivot"))
-#
-#     # Add the formset to context dictionary
-#     context['formset'] = formset
-#     context['filter'] = CardFilter
-#     return render(request, "admin_pivot_tab.html", context)
+def admin_cards_update_view(request):
+    data = Card.objects.filter(status=0, delete=0)
+    context = {}
+
+    if request.method == "POST":
+        formset = AdminCardFormSet(request.POST, request.FILES, queryset=data)
+        if formset.is_valid():
+            for form in formset:
+                if form.cleaned_data == {}:
+                    continue
+                # print(form.cleaned_data)
+                qform = form.save(commit=False)
+                if qform.method == 1:
+                    qform.low_level = format(float(qform.low_level.replace(',', '.')), '.3f')
+                    qform.target_level = format(float(qform.target_level.replace(',', '.')), '.3f')
+                    qform.high_level = format(float(qform.high_level.replace(',', '.')), '.3f')
+
+                qform.save()
+
+            return redirect(reverse_lazy("admin_pivot"))
+    else:
+        formset = AdminCardFormSet(queryset=data)
+    context['formset'] = formset
+    context['filter'] = CardFilter
+    return render(request, "admin_pivot_tab.html", context)
