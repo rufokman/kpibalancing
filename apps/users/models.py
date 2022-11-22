@@ -3,8 +3,6 @@ from django.db import models
 
 
 class CustomUser(AbstractUser):
-
-
     function = models.PositiveIntegerField(choices=[
         (None, 'Выберите функцию'),
         (0, "Экономика и финансы"),
@@ -23,8 +21,4 @@ class CustomUser(AbstractUser):
         (13, "Административное управление"),
         (14, "Закупки и МТО"),
         (15, "Внутренний контроль и аудит"),
-        (16, "Бухгалтерия")], verbose_name='Функция')
-
-
-
-    # add additional fields in here
+        (16, "Бухгалтерия")], verbose_name='Функция', blank=True, null=True )

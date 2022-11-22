@@ -1,4 +1,4 @@
-4{% extends 'base.html' %}
+{% extends 'base.html' %}
 {% block content %}
 {% load bootstrap3 %}
 
@@ -80,9 +80,12 @@
 	</table>
 	<button type="submit" onclick="isValid()">Обновить</button>
 	<button>
-		<a href = "{% url 'download_pivot' %}">Загрузить</a>
+    	<a href = "{% url 'download_pivot_not_fix' %}">Выгрузить отчёт без фиксации даты</a>
 	</button>
-
+	<button>
+		<a href = "{% url 'download_pivot' %}">Выгрузить отчёт</a>
+	</button>
+	<a>{{ last_download }}</a>
 	<button>
 		<a href = "{% url 'open' %}">Разрешить запись</a>
 	</button>
