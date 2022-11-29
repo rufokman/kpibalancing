@@ -36,13 +36,15 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
     'apps.users',
     'apps.balancingapp',
     'floppyforms',
     'django_filters',
     'bootstrap3',
     "django_tables2",
+    'django.contrib.staticfiles',
+    'jquery',
+
 
 ]
 
@@ -133,10 +135,9 @@ STATIC_URL = '/static/'
 # Default primary key field type
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.CustomUser'
 LOGIN_REDIRECT_URL = '/kpibalancing/'
 LOGOUT_REDIRECT_URL = '/kpibalancing/'
-# STATIC_ROOT = os.path.join(BASE_DIR, "balancingapp/static")
 GS_BUCKET_NAME = os.environ.get('GS_BUCKET_NAME')

@@ -37,6 +37,10 @@ def download_excel_data_without(request):
 	format = workbook.add_format()
 	format.set_bg_color('#fdc433')
 	ws = workbook.add_worksheet('Реестр')
+	ws_change = workbook.add_worksheet('Лист изменений')
+	ws_change.set_column('A:A', 23)
+	ws_change.set_column('B:B', 23)
+	ws_change.set_column('C:C', 23, )
 
 	ws.set_column('A:A', 5)
 	ws.set_column('B:B', 23)
@@ -96,11 +100,18 @@ def download_excel_data_without(request):
 		changed_data = pd.DataFrame({'name_col':[],
 									 'id_kpi': []},)
 	print(changed_data)
+	for pk in changed_data.id_kpi.unique():
+		Card.objects.filter(pk=pk)
+		ogj=Card.objects.filter(pk=pk).first()
+		ws_change.write(row_num, 0,swap_dict[ogj.function])
+		ws_change.write(row_num, 1, ogj.organization)
+		ws_change.write(row_num, 2, ogj.name)
+		row_num+=1
+	row_num=0
 	for my_row in get_update_data_not_fix()[0]:
 		row_num = row_num + 1
 		ws.write(row_num, 0, row_num)
 		if changed_data[(changed_data.name_col=='organization') & (changed_data.id_kpi==my_row.id)].shape[0]!=0:
-
 			ws.write(row_num, 1, my_row.organization, format)
 		else:
 			ws.write(row_num, 1, my_row.organization)
@@ -173,6 +184,12 @@ def download_excel_data_without(request):
 			ws.write(row_num, 18, my_row.comment_audit_AES, format)
 		else:
 			ws.write(row_num, 18, my_row.comment_audit_AES)
+
+	ws_change.set_column('A:A', 23)
+	ws_change.set_column('B:B', 23)
+	ws_change.set_column('C:C', 23, )
+	ws_change.set_column('D:D', 23, )
+
 	workbook.close()
 	return response
 
@@ -184,7 +201,10 @@ def download_excel_data(request):
 	format = workbook.add_format()
 	format.set_bg_color('#fdc433')
 	ws = workbook.add_worksheet('Реестр')
-
+	ws_change = workbook.add_worksheet('Лист изменений')
+	ws_change.set_column('A:A', 23)
+	ws_change.set_column('B:B', 23)
+	ws_change.set_column('C:C', 23, )
 	ws.set_column('A:A', 5)
 	ws.set_column('B:B', 23)
 	ws.set_column('C:C', 23, )
@@ -242,6 +262,12 @@ def download_excel_data(request):
 		changed_data = pd.DataFrame({'name_col':[],
 									 'id_kpi': []},)
 	print(changed_data)
+	for pk in changed_data.id_kpi.unique():
+		Card.objects.filter(pk=pk)
+		ogj=Card.objects.filter(pk=pk).first()
+		ws_change.write(row_num, 0,swap_dict[ogj.function])
+		ws_change.write(row_num, 1, ogj.organization)
+		ws_change.write(row_num, 2, ogj.name)
 	for my_row in get_update_data()[0]:
 		row_num = row_num + 1
 		ws.write(row_num, 0, row_num)

@@ -14,24 +14,23 @@ class Config(models.Model):
         db_table = 'config'
 
 
-
 class Card(models.Model):
+
     status_list = [(0, 'Согласован'),
-              (1, 'Согласование СУП'),
-              (2, 'Отклонён'),
-              (3, 'На доработке'),
-              (4, "Новый"),
-              (5, "Корректировка СУП")]
+                   (1, 'Согласование СУП'),
+                   (2, 'На доработке'),
+                   (3, 'Новый'),
+                   (4, "Корректировка СУП")]
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Последнее обновление')
-    status = models.PositiveIntegerField(choices=status_list, blank=True, default=4)
+    status = models.PositiveIntegerField(choices=status_list, null=True, default=3)
     status_for_display = models.CharField(choices=[('Согласован', 'Согласован'),
-                                                      ('Согласование СУП', 'Согласование СУП'),
-                                                      ('Отклонён', 'Отклонён'),
-                                                      ('На доработке', 'На доработке'),
-                                                      ('Новый', "Новый"),
-                                                      ('Корректировка СУП', "Корректировка СУП")], max_length=50,
-                                          verbose_name='Статус', blank=True)
+                                                   ('Согласование СУП', 'Согласование СУП'),
+                                                   ('На доработке', 'На доработке'),
+                                                   ('Новый', "Новый"),
+                                                   ('Корректировка СУП', "Корректировка СУП")], max_length=50,
+                                                    verbose_name='Статус', blank=True)
     organization_list = [
         (None, "Выберите организацию"),
         ("ЦА", "ЦА"),
@@ -77,7 +76,6 @@ class Card(models.Model):
     send = models.BooleanField(default=False)
     organization = models.CharField(choices=organization_list, verbose_name="Организация", max_length=300)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-
     function = models.PositiveIntegerField(choices=[
         (None, 'Выберите функцию'),
         (0, "Экономика и финансы"),
@@ -99,8 +97,8 @@ class Card(models.Model):
         (16, "Бухгалтерия")], verbose_name='Функция')
     role = models.CharField(max_length=100, verbose_name="Должность")
     fio = models.CharField(max_length=300, verbose_name="ФИО сотрудника, в чью карту устанавливается КПЭ")
-    id_kpi = models.PositiveIntegerField(null=True, verbose_name='ID КПЭ в ИС РЕКОРД')
-    kpi_kls2 = models.TextField(null=True,verbose_name='КПЭ / КлС2')
+    id_kpi = models.CharField(blank=True, verbose_name='ID КПЭ в ИС РЕКОРД', max_length=50)
+    kpi_kls2 = models.TextField(null=True, verbose_name='КПЭ / КлС2')
     name = models.CharField(max_length=3000, verbose_name='Наименование КПЭ / КлС')
     method = models.PositiveIntegerField(choices=[
         (None, 'Выберите методику расчета КПЭ'),
@@ -112,16 +110,16 @@ class Card(models.Model):
     target_level = models.CharField(max_length=3000, verbose_name='Целевой уровень')
     high_level = models.CharField(max_length=3000, verbose_name="Верхний уровень")
     weight = models.IntegerField(verbose_name='Вес')
-    fact = models.TextField(null=True, verbose_name='Факт выполнения')
-    verificator = models.TextField(null=False, verbose_name='Инициатор / Верификатор')
-    comment_func = models.TextField(null=True, verbose_name='Комментарий от функции (по необходимости)')
-    comment_audit = models.TextField(null=True, verbose_name='Комментарии по аудиту (заполняется СУП УК)')
-    comment_audit_AES = models.TextField(null=True, verbose_name='Комментарии по аудиту (заполняется сотрудником АЭС/ДО)')
-    comment_SUP = models.TextField()
+    fact = models.TextField(blank=True, verbose_name='Факт выполнения')
+    verificator = models.TextField(null=True, verbose_name='Инициатор / Верификатор')
+    comment_func = models.TextField(blank=True, verbose_name='Комментарий от функции (по необходимости)')
+    comment_audit = models.TextField(blank=True, verbose_name='Комментарии по аудиту (заполняется СУП УК)')
+    comment_audit_AES = models.TextField(blank=True, verbose_name='Комментарии по аудиту (заполняется сотрудником АЭС/ДО)')
+    comment_SUP = models.TextField(null=True)
     passport = models.FileField(upload_to='passports/', verbose_name="Паспорт", default="", null=True, blank=True,
                                 validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
 
-    delete = models.BooleanField(default=0)
+    delete = models.BooleanField(default=0, verbose_name="Удалить")
     class Meta:
         managed = True
         db_table = 'card'
@@ -131,6 +129,7 @@ class Change(models.Model):
     id_kpi = models.PositiveIntegerField()
     update_at = models.DateTimeField(auto_now=True, verbose_name='Последнее обновление')
     name_col = models.TextField()
+
 
     class Meta:
         managed = True

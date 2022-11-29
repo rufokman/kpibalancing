@@ -1,26 +1,12 @@
 from django import forms
-import floppyforms
-
 from .models import *
-from django.forms import formset_factory, modelformset_factory, inlineformset_factory
+from django.forms import modelformset_factory
 from django.core.exceptions import ValidationError
-import numpy as np
 import re
-
-organization_list = ("ЦА", 'Балаковская АЭС', 'Белоярская АЭС', 'Билибинская АЭС', 'Калининская АЭС',
-                     'Кольская АЭС', 'Курская АЭС', 'Ленинградская АЭС', 'Нововоронежская АЭС', 'Ростовская АЭС',
-                     'Смоленская АЭС', 'ПАТЭС', 'Технологический филиал', 'ОДИЦ ВВЭР', 'ОДИЦ РБМК', 'Строящаяся Балтийская АЭС',
-                     'ИЦ Аккую', 'Воронежская АСТ', 'Филиал в Бангладеш', 'Атомтехэнерго', 'АтомЭнергоСбыт', 'АтомЭнергоРемонт',
-                     'ЗАЭС', 'АтомТеплоЭлектроСеть', 'Техническая Академия', 'ИКАО', 'НИЦ АЭС', 'ЭНИЦ', 'Энергоатоминвест',
-                     'Балтийская АЭС, АО', 'Атомтранс', 'Атомтеплосбыт', 'ВНИИАЭС','Титан - 2','Консист - ОС', 'С - Плюс',
-                     'Неорганические сорбенты', 'АТОМДАТА', 'Атомдата - Центр', 'Атомдата - Иннополис')
+import numpy as np
 
 
-class CustomSelect(forms.Select):
-    option_inherits_attrs = True
-
-
-class CardsForm(forms.ModelForm):
+class AdminCardsForm(forms.ModelForm):
 
     def clean(self):
 
@@ -78,45 +64,44 @@ class CardsForm(forms.ModelForm):
                     if post_weight % 5 != 0:
                         raise ValidationError(u"invalid")
 
-
     class Meta:
         model = Card
         fields = [
-            'send',
+            'delete',
             'organization',
+            'function',
             'role',
             'fio',
+            'id_kpi',
             'name',
             'method',
             'low_level',
             'target_level',
             'high_level',
             'weight',
-            'status',
-            'id_kpi',
-            'verificator',
             'passport',
-            'delete',
-            'status_for_display',
+            'fact',
+            'verificator',
+            'comment_func',
+            'comment_audit',
+            'comment_audit_AES'
 
         ]
         widgets = {
-            'send': forms.CheckboxInput(),
-            'role': forms.Textarea(attrs={'rows': 2,}),
+            'role': forms.Textarea(attrs={'rows': 2, }),
             'fio': forms.Textarea(attrs={'rows': 2, }),
             'name': forms.Textarea(attrs={'rows': 2, }),
-            'status_for_display': forms.TextInput(attrs={'readonly':"True"}),
-            'id_kpi': forms.TextInput(attrs={'readonly':"True"}),
-            'delete': forms.HiddenInput(),
-            'status': forms.HiddenInput(),
+            'id_kpi': forms.Textarea(attrs={'rows': 2}),
             'verificator': forms.Textarea(attrs={'rows': 2, }),
-
+            'fact': forms.Textarea(attrs={'rows': 2, }),
+            'comment_func': forms.Textarea(attrs={'rows': 2, }),
+            'comment_audit': forms.Textarea(attrs={'rows': 2, }),
+            'comment_audit_AES': forms.Textarea(attrs={'rows': 2, }),
         }
 
 
-CardFormSet = modelformset_factory(
+AdminCardFormSet = modelformset_factory(
     model=Card,
-    form=CardsForm,
-    extra=1,
-    can_delete=True,
+    form=AdminCardsForm,
+    extra=0,
 )

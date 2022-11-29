@@ -2,96 +2,222 @@
 {% block content %}
 {% load bootstrap3 %}
 
-<!--{% if filter %}-->
-
-<!--{% endif %}-->
-
-
 <form method="POST" enctype="multipart/form-data">
-
-    <!-- Security token -->
 	{% csrf_token %}
-	<table id="formset" class="form table table-condensed zeon zeon-row-hover">
-	{{ formset.management_form }}
+	<table>
+		<thead>
+		<tr>
+			<th>Организация</th>
+			<th>Функция</th>
+			<th>Должность</th>
+			<th>ФИО сотрудника, в чью карту устанавливается КПЭ</th>
+			<th>ID КПЭ в ИС РЕКОРД</th>
+			<th>Наименование КПЭ / КлС</th>
+			<th>Методика расчета</th>
+			<th>Нижний уровень</th>
+			<th>Целевой уровень</th>
+			<th>Верхний уровень</th>
+			<th>Вес</th>
+			<th>Паспорт</th>
+			<th>Факт выполнения</th>
+			<th>Инициатор / Верификатор	</th>
+			<th>Комментарий от функции (по необходимости)</th>
+			<th>Комментарии по аудиту (заполняется СУП УК)</th>
+			<th>Комментарии по аудиту (заполняется сотрудником АЭС/ДО)</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<th hidden>{{ add_form.delete }}</th>
 
-	{% for form in formset.forms %}
-	  {% if forloop.first %}
-	  <thead><tr>
-		{% for field in form.visible_fields %}
-		  <th class="filters">{{ field.label|capfirst }}
-		{% endfor %}
-	  </tr></thead>
-	  {% endif %}
-	  <tr>
-	  {% for field in form.visible_fields %}
-		<td class = 'zeon_input_table_cell'>
-		{# Include the hidden fields in the form #}
-		{% if forloop.first %}
-			  {% for hidden in form.hidden_fields %}
-			  {{ hidden }}
-			  {% endfor %}
-		{% endif %}
-		  {{ field.errors.as_ul }}
-			{{field}}
-		</td>
-	  {% endfor %}
-	  </tr>
-	{% endfor %}
-		<script type = "text/javascript">
-			function isValid() {
-				const weight = document.querySelectorAll("[id$='weight']");
-				const method = document.querySelectorAll("[id$='method']");
-				const low = document.querySelectorAll("[id$='low_level']");
-				const target = document.querySelectorAll("[id$='target_level']");
-				const high = document.querySelectorAll("[id$='high_level']");
-				for (let i = 0; i < weight.length; i++) {
-					var reg = /^[\d\,\.]*$/;
-					let weight_item = weight[i]
-					let method_item = method[i]
-					let low_item = low[i]
-					let target_item = target[i]
-					let high_item = high[i]
-					if (method_item.value!="") {
+			<th>{{ add_form.organization }}</th>
+			<th>{{ add_form.function }}</th>
+			<th>{{ add_form.role }}</th>
+			<th>{{ add_form.fio }}</th>
+			<th>{{ add_form.id_kpi }}</th>
+			<th>{{ add_form.name }}</th>
+			<th>{{ add_form.method }}</th>
+			<th>{{ add_form.low_level }}</th>
+			<th>{{ add_form.target_level }}</th>
+			<th>{{ add_form.high_level }}</th>
+			<th>{{ add_form.weight }}</th>
+			<th>{{ add_form.passport }}</th>
+			<th>{{ add_form.fact }}</th>
+			<th>{{ add_form.verificator }}</th>
+			<th>{{ add_form.comment_func }}</th>
+			<th>{{ add_form.comment_audit }}</th>
+			<th>{{ add_form.comment_audit_AES }}</th>
+			<th>{{ add_form.comment_SUP }}</th>
+		</tr>
 
-						if (method_item.value == 3 && weight_item.value > 0) {
-							confirm('Значение веса должно быть отрицательным.');
-						} else {
-							if (Math.abs(weight_item.value) < 9 || Math.abs(weight_item.value) > 61) {
-								confirm("Значение веса должно должно быть больше или равно 10, но меньше или равно 60.");
-							};
-							if (method_item.value == 0 || method_item.value == 1) {
-								if (weight_item.value % 5 != 0) {
-									confirm("Значение веса должно должно быть кратным 5.");
-								}
-							};
-							if (method_item.value == 1) {
-								var cond = reg.test(low_item.value) && reg.test(target_item.value) && reg.test(high_item.value);
-								if (cond == false) {
-									confirm('Для непрерывных КПЭ допустимы только числовые значния.');
-								}
-							};
-
-						}
-					}
-				}
-			};
-		</script>
+		</tbody>
 
 	</table>
-	<button type="submit" onclick="isValid()">Обновить</button>
-	<button>
-    	<a href = "{% url 'download_pivot_not_fix' %}">Выгрузить отчёт без фиксации даты</a>
-	</button>
-	<button>
-		<a href = "{% url 'download_pivot' %}">Выгрузить отчёт</a>
-	</button>
-	<a>{{ last_download }}</a>
-	<button>
-		<a href = "{% url 'open' %}">Разрешить запись</a>
-	</button>
-	<button>
-		<a href = "{% url 'close' %}">Закрыть запись</a>
-	</button>
+	<button type="submit" onclick="isValid()">Добавить</button>
+
 </form>
+<br>
+<br>
+<br>
+<form method="POST" enctype="multipart/form-data">
+		{% csrf_token %}
+
+
+
+	<input type="text" id="organization-search" onkeyup="search()" placeholder="Организация" class="table-search-filters">
+	<input type="text" id="function-search" onkeyup="search()" placeholder="Функция" class="table-search-filters">
+	<input type="text" id="role-search" onkeyup="search()" placeholder="Должность" class="table-search-filters">
+	<input type="text" id="fio-search" onkeyup="search()" placeholder="ФИО сотрудника" class="table-search-filters">
+	<input type="text" id="name-search" onkeyup="search()" placeholder="Наименование КПЭ/КлС" class="table-search-filters">
+	<button type="button" onclick="ClearFields();">Сбросить все фильтры</button>
+
+	<table id="formset-table">
+		{{ formset.management_form }}
+		{% for form in formset.forms %}
+		{% if forloop.first %}
+		<thead>
+		<tr>
+			{% for field in form.visible_fields %}
+			<th>
+				{{ field.label|capfirst }}
+			</th>
+			{% endfor %}
+		</tr>
+		</thead>
+		{% endif %}
+		<tbody>
+		<tr>
+			{% for field in form.visible_fields %}
+			<td>
+				{# Include the hidden fields in the form #}
+				{% if forloop.first %}
+					  {% for hidden in form.hidden_fields %}
+					  {{ hidden }}
+					  {% endfor %}
+				{% endif %}
+				  {{ field.errors.as_ul }}
+					{{field}}
+			</td>
+			{% endfor %}
+		</tr>
+		</tbody>
+		{% endfor %}
+	</table>
+<button type="submit" onclick="isValid()">Обновить</button>
+<button>
+	<a href = "{% url 'download_pivot_not_fix' %}">Выгрузить отчёт без фиксации даты</a>
+</button>
+<button>
+	<a href = "{% url 'download_pivot' %}">Выгрузить отчёт</a>
+</button>
+<a>{{ last_download }}</a>
+<button>
+	<a href = "{% url 'open' %}">Разрешить запись</a>
+</button>
+<button>
+	<a href = "{% url 'close' %}">Закрыть запись</a>
+</button>
+</form>
+<script>
+var input_organization = document.getElementById("organization-search");
+var input_function = document.getElementById("function-search");
+var input_role = document.getElementById("role-search");
+var input_fio = document.getElementById("fio-search");
+var input_name = document.getElementById("name-search");
+
+var table = document.getElementById("formset-table");
+
+function search() {
+  let filter_organization = input_organization.value.toUpperCase();
+  let filter_function = input_function.value.toUpperCase();
+  let filter_role = input_role.value.toUpperCase();
+  let filter_fio = input_fio.value.toUpperCase();
+  let filter_name = input_name.value.toUpperCase();
+
+  let tr = table.rows;
+  for (let i = 1; i < tr.length; i++) {
+    td = tr[i].cells;
+    td_organization = td[1].firstElementChild.options[td[1].firstElementChild.selectedIndex].value;
+    td_function = td[2].firstElementChild.options[td[2].firstElementChild.selectedIndex].text;
+    td_role = td[3].firstElementChild.innerHTML;
+    td_fio = td[4].firstElementChild.innerHTML;
+    td_name = td[6].firstElementChild.innerHTML;
+
+    if (td_role.toUpperCase().indexOf(filter_role) > -1 && td_fio.toUpperCase().indexOf(filter_fio) > -1 && td_name.toUpperCase().indexOf(filter_name) > -1
+     && td_organization.toUpperCase().indexOf(filter_organization) > -1 && td_function.toUpperCase().indexOf(filter_function) > -1) {
+      tr[i].style.display = "";
+    } else
+      tr[i].style.display = "none";
+  }
+};
+
+function ClearFields() {
+
+     document.getElementById("organization-search").value = "";
+     document.getElementById("function-search").value = "";
+     document.getElementById("role-search").value = "";
+     document.getElementById("fio-search").value = "";
+     document.getElementById("name-search").value = "";
+
+     window.location.reload();
+};
+function isValid() {
+	const weight = document.querySelectorAll("[id$='weight']");
+	const method = document.querySelectorAll("[id$='method']");
+	const low = document.querySelectorAll("[id$='low_level']");
+	const target = document.querySelectorAll("[id$='target_level']");
+	const high = document.querySelectorAll("[id$='high_level']");
+	for (let i = 0; i < weight.length; i++) {
+		var reg = /^[\d\,\.]*$/;
+		let weight_item = weight[i]
+		let method_item = method[i]
+		let low_item = low[i]
+		let target_item = target[i]
+		let high_item = high[i]
+		if (method_item.value!="") {
+
+			if (method_item.value == 3 && weight_item.value > 0) {
+				confirm('Значение веса должно быть отрицательным.');
+			} else {
+				if (Math.abs(weight_item.value) < 9 || Math.abs(weight_item.value) > 61) {
+					confirm("Значение веса должно должно быть больше или равно 10, но меньше или равно 60.");
+				};
+
+			if (method_item.value == 0 || method_item.value == 1) {
+				if (weight_item.value % 5 != 0) {
+					confirm("Значение веса должно должно быть кратным 5.");
+				}
+				if (weight_item.value < 0) {
+					confirm("Для непрерывных и дискретных КПЭ начение веса не может быть отрицательным");
+				}
+			};
+			if (method_item.value == 1) {
+				var cond = reg.test(low_item.value) && reg.test(target_item.value) && reg.test(high_item.value);
+				if (cond == false) {
+					confirm('Для непрерывных КПЭ допустимы только числовые значния.');
+				}
+
+			};
+			if (method_item.value == 1) {
+				let cond_increase = (parseFloat(low_item.value) < parseFloat(target_item.value)) && (parseFloat(target_item.value) < parseFloat(high_item.value))
+				let cond_decrease = (parseFloat(low_item.value) > parseFloat(target_item.value)) && (parseFloat(target_item.value) > parseFloat(high_item.value))
+
+				console.log(parseFloat(low_item.value) < parseFloat(target_item.value))
+				console.log(parseFloat(low_item.value))
+				console.log(parseFloat(target_item.value))
+				if (cond_increase || cond_decrease) {
+						console.log("по возрастанию")
+					} else {
+						confirm("Для непрерывных КПЭ значения уровней должны либо возрастать, либо убывать");
+
+					}
+			}
+
+			}
+		}
+	}
+};
+</script>
+
 {% endblock %}
 

@@ -5,3 +5,4 @@ from .models import *
 
 admin.site.register(Card)
 admin.site.register(Config)
+admin.site.register(Change)
