@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <system.webServer>
+    <handlers>
+        <add name="Django Handler" path="*" verb="*" modules="FastCgiModule" scriptProcessor="C:\Python\Python37\python.exe|C:\Python\Python37\Lib\site-packages\wfastcgi.py" resourceType="Unspecified" />
+    </handlers>
+  </system.webServer>
+
+  <appSettings>
+    <add key="PYTHONPATH" value="C:\inetpub\wwwroot\kpibalancing" />
+    <add key="WSGI_HANDLER" value="config.wsgi.application" />
+    <add key="DJANGO_SETTINGS_MODULE" value="config.settings" />
+  </appSettings>
+</configuration>
